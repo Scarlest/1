@@ -1,0 +1,318 @@
+////activity main design
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/etAd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="İsim giriniz : "
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/etSoyad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Soyad Giriniz"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/etTel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Tel no Giriniz "
+                android:inputType="phone" />
+
+            <EditText
+                android:id="@+id/etMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="email giriniz"
+                android:inputType="textEmailAddress" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnKaydet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Kaydet" />
+
+                <Button
+                    android:id="@+id/btnduzelt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Düzelt" />
+
+                <Button
+                    android:id="@+id/btnSil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sil" />
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lvKisiler"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+///MAİN ACTİVİTY KODLARI
+package com.topcubasi.sqlislem;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    EditText etAd, etSoyad, etTel, etMail;
+    Button btnKaydet, btnsil, btnDuzelt;
+    ListView lvKisiler;
+    int secilenId = 0;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        etAd = findViewById(R.id.etAd);
+        etSoyad = findViewById(R.id.etSoyad);
+        etTel = findViewById(R.id.etTel);
+        etMail = findViewById(R.id.etMail);
+        btnKaydet = findViewById(R.id.btnKaydet);
+        btnDuzelt = findViewById(R.id.btnduzelt);
+        btnsil = findViewById(R.id.btnSil);
+        lvKisiler = findViewById(R.id.lvKisiler);
+        listele();
+        btnKaydet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String gelenAd = etAd.getText().toString();
+                String gelenSoyad = etSoyad.getText().toString();
+                String gelenTel = etTel.getText().toString();
+                String gelenMail = etMail.getText().toString();
+                VeriTabani vt = new VeriTabani(MainActivity.this);
+                vt.veriEkle(gelenAd, gelenSoyad, gelenTel, gelenMail);
+                Toast.makeText(getApplicationContext(), "Kayıt yapıldı", Toast.LENGTH_SHORT).show();
+                temizle();
+                listele();
+            }
+        });
+        btnDuzelt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String gelenAd = etAd.getText().toString();
+                String gelenSoyad = etSoyad.getText().toString();
+                String gelenTel = etTel.getText().toString();
+                String gelenMail = etMail.getText().toString();
+                VeriTabani vt = new VeriTabani(MainActivity.this);
+                vt.veriDuzenle(secilenId,gelenAd, gelenSoyad, gelenTel, gelenMail);
+                Toast.makeText(getApplicationContext(), "Kayıt Düzeltildi", Toast.LENGTH_SHORT).show();
+                temizle();
+                listele();
+            }
+        });
+        btnsil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VeriTabani vt = new VeriTabani(MainActivity.this);
+                vt.veriSil(secilenId);
+                Toast.makeText(getApplicationContext(), "Kayıt Silindi", Toast.LENGTH_SHORT).show();
+                temizle();
+                listele();
+            }
+        });
+    }
+
+    private void listele() {
+        VeriTabani vt = new VeriTabani(MainActivity.this);
+        List<String> gelenVeriler = vt.Listele();
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gelenVeriler);
+        lvKisiler.setAdapter(adapter);
+        lvKisiler.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String secilen = lvKisiler.getItemAtPosition(position).toString();
+                Toast.makeText(getApplicationContext(), "" + secilen, Toast.LENGTH_SHORT).show();
+                String [] itemBolunen=secilen.split("/");
+                secilenId=Integer.parseInt(itemBolunen[0].toString());
+                String secilenAd=itemBolunen[1].toString();
+                String secilenSoyad=itemBolunen[2].toString();
+                String secilenTel=itemBolunen[3].toString();
+                String secilenMail=itemBolunen[4].toString();
+                etAd.setText(secilenAd);
+                etSoyad.setText(secilenSoyad);
+                etTel.setText(secilenTel);
+                etMail.setText(secilenMail);
+            }
+        });
+    }
+
+    private void temizle() {
+        etAd.setText(null);
+        etSoyad.setText(null);
+        etTel.setText(null);
+        etMail.setText(null);
+    }
+}
+
+
+
+
+
+////Veritabani.java
+package com.topcubasi.sqlislem;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class VeriTabani extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "musteriler.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String TABLO_KISILER = "kisiler";
+    private static final String ROW_ID = "id";
+    private static final String ROW_AD = "ad";
+    private static final String ROW_SOYAD = "soyad";
+    private static final String ROW_TEL = "tel";
+    private static final String ROW_MAIL = "mail";
+
+    public VeriTabani(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLO_KISILER);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + TABLO_KISILER + "("
+                + ROW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ROW_AD + " TEXT NOT NULL, "
+                + ROW_SOYAD + " TEXT NOT NULL, "
+                + ROW_TEL + " TEXT NOT NULL, "
+                + ROW_MAIL + " TEXT NOT NULL)");
+    }
+
+    public void veriEkle(String ad, String soyad, String tel, String mail) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(ROW_AD, ad);
+            cv.put(ROW_SOYAD, soyad);
+            cv.put(ROW_TEL, tel);
+            cv.put(ROW_MAIL, mail);
+            db.insert(TABLO_KISILER, null, cv);
+        } catch (Exception e) {
+            System.out.println("hata : " + e);
+        } finally {
+            db.close();
+        }
+    }
+
+    public List<String> Listele() {
+        List<String> veriler = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            String sutunlar[] = {ROW_ID,ROW_AD,ROW_SOYAD,ROW_TEL,ROW_MAIL};
+            Cursor cursor=db.query(TABLO_KISILER,sutunlar,null,null,null,null,null);
+            while(cursor.moveToNext()){
+                veriler.add(cursor.getInt(0)
+                        +"/"+cursor.getString(1)
+                        +"/"+cursor.getString(2)
+                        +"/"+cursor.getString(3)
+                        +"/"+cursor.getString(4)
+                );
+            }
+        } catch (Exception e) {
+            System.out.println("hata : " + e);
+        } finally {
+            db.close();
+        }
+        return veriler;
+    }
+    public void veriDuzenle(int id,String ad, String soyad, String tel, String mail) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(ROW_AD, ad);
+            cv.put(ROW_SOYAD, soyad);
+            cv.put(ROW_TEL, tel);
+            cv.put(ROW_MAIL, mail);
+            //String duzeltmeAlani = ROW_ID+" = '"+id+"'";
+            String duzeltmeAlani = ROW_ID+" = "+id;
+            db.update(TABLO_KISILER, cv,duzeltmeAlani,null);
+        } catch (Exception e) {
+            System.out.println("hata : " + e);
+        } finally {
+            db.close();
+        }
+    }
+    public void veriSil(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            String silmeAlani = ROW_ID+" = "+id;
+            db.delete(TABLO_KISILER, silmeAlani,null);
+        } catch (Exception e) {
+            System.out.println("hata : " + e);
+        } finally {
+            db.close();
+        }
+    }
+
+
+}
