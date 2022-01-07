@@ -1,0 +1,233 @@
+//////SECENEKLER
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <DigitalClock
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></DigitalClock>
+            <AnalogClock
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></AnalogClock>
+
+            <Button
+                android:id="@+id/btntitresim"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Titreşim" />
+
+            <Button
+                android:id="@+id/btnSessiz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sessiz" />
+
+            <Button
+                android:id="@+id/btnSesli"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sesli" />
+
+            <Button
+                android:id="@+id/btnSesTitre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ses Titreşim" />
+
+            <Button
+                android:id="@+id/btnNormalToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Normal toast" />
+
+            <Button
+                android:id="@+id/btnResimToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Resimli Toast" />
+
+            <Button
+                android:id="@+id/btnOzelYazi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Özel Yazı" />
+
+            <Button
+                android:id="@+id/btnEkran"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ekran Toast" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+////OZEL EKRAN
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ozelEkran"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:background="#CCCCF4">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="ÖZel Yazı"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+///MAİNACTİVİTY KODLAR
+package com.topcubasi.secenekler;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    Button btnTitresim, btnNormalToast, btnResimliToast, btnOzelYazi, btnSesli, btnSessiz, btnSesTitresim, btnOzelekran;
+    Vibrator titresim;
+    AudioManager audioManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        btnTitresim = findViewById(R.id.btntitresim);
+        btnNormalToast = findViewById(R.id.btnNormalToast);
+        btnResimliToast = findViewById(R.id.btnResimToast);
+        btnOzelYazi = findViewById(R.id.btnOzelYazi);
+        btnSesli = findViewById(R.id.btnSesli);
+        btnSessiz = findViewById(R.id.btnSessiz);
+        btnOzelekran = findViewById(R.id.btnEkran);
+        titresim = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        audioManager=(AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+        btnSesTitresim = findViewById(R.id.btnSesTitre);
+        btnTitresim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                titresim.vibrate(1000);
+            }
+        });
+        btnNormalToast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Normal Toast", Toast.LENGTH_SHORT).show();
+            }
+        });
+        btnResimliToast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageView resim = new ImageView(getApplicationContext());
+                resim.setImageResource(R.drawable.resim1);
+                Toast toast = new Toast(getApplicationContext());
+                toast.setView(resim);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setMargin(0, 0);
+                toast.show();
+            }
+        });
+        btnOzelYazi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView yazi = new TextView(getApplicationContext());
+                yazi.setText("Özel Yazı");
+                yazi.setAllCaps(true);
+                yazi.setTextColor(Color.RED);
+                yazi.setTextSize(25);
+                yazi.setBackgroundColor(Color.YELLOW);
+                Toast toast = new Toast(getApplicationContext());
+                toast.setView(yazi);
+                toast.setDuration(Toast.LENGTH_LONG);
+                //  toast.setMargin(0,-50);
+                toast.setGravity(1, 150, 0);
+                toast.show();
+            }
+        });
+        btnOzelekran.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflater = getLayoutInflater();
+                View goruntu = layoutInflater.inflate(R.layout.ozel_ekran, (ViewGroup) findViewById(R.id.ozelEkran));
+                Toast toast = new Toast(getApplicationContext());
+                toast.setView(goruntu);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setGravity(1, 150, 0);
+                toast.show();
+            }
+        });
+        btnSesli.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                Toast.makeText(MainActivity.this, "Ses açıldı", Toast.LENGTH_SHORT).show();
+            }
+        });
+        btnSessiz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                Toast.makeText(MainActivity.this, "Sessiz", Toast.LENGTH_SHORT).show();
+            }
+        });
+        btnSesTitresim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                Toast.makeText(MainActivity.this, "Titreşim", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
