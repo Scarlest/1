@@ -1,0 +1,206 @@
+//ACTIVITY MAIN DESIGN
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <EditText
+                android:id="@+id/etAd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="İsim giriniz : "
+                android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/etSoyad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Soyad Giriniz"
+                android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/etTelNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Tel No Giriniz"
+                android:inputType="phone" />
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Mail giriniz"
+                android:inputType="textEmailAddress" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+               <Button
+                    android:id="@+id/btnKaydet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Kaydet" />
+                <Button
+                    android:id="@+id/btnListele"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Listele" />
+                <Button
+                    android:id="@+id/btnSil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sil" />
+                <Button
+                    android:id="@+id/btnDuzelt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Düzelt" />
+            </LinearLayout>
+            <ListView
+                android:id="@+id/lvKayit"
+                android:layout_width="match_parent"
+                android:layout_height="400dp" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+//MAIN ACTIVITY KODLARI
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.*
+
+class MainActivity : AppCompatActivity() {
+    lateinit var etAd: EditText
+    lateinit var etSoyad: EditText
+    lateinit var etTel: EditText
+    lateinit var etMail: EditText
+    lateinit var btnKaydet: Button
+    lateinit var btnListele: Button
+    lateinit var lvAdlar: ListView
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        etAd = findViewById(R.id.etAd)
+        etSoyad = findViewById(R.id.etSoyad)
+        etTel = findViewById(R.id.etTelNo)
+        etMail = findViewById(R.id.etEmail)
+        btnKaydet = findViewById(R.id.btnKaydet)
+        btnListele = findViewById(R.id.btnListele)
+        lvAdlar=findViewById(R.id.lvKayit)
+        listele()
+        btnKaydet.setOnClickListener {
+            val gelenAd = etAd.text.toString()
+            val gelenSoyad = etSoyad.text.toString()
+            val gelenTel = etTel.text.toString()
+            val gelenMail = etMail.text.toString()
+            val vt = VeriTabani(this)
+            val sonuc = vt.veriEkle(gelenAd, gelenSoyad, gelenTel, gelenMail)
+            Toast.makeText(this, sonuc.toString() + " Kayıt eklendi", Toast.LENGTH_LONG).show()
+            temizle()
+            listele()
+        }
+        btnListele.setOnClickListener { listele() }
+    }
+    private fun listele() {
+        val vt=VeriTabani(this)
+        val liste=vt.veriListele()
+        val adapter=ArrayAdapter(this,android.R.layout.simple_list_item_1,liste)
+        lvAdlar.adapter=adapter
+    }
+    private fun temizle() {
+        etAd.text = null
+        etSoyad.text = null
+        etMail.text = null
+        etTel.text = null
+    }
+}
+
+//VERİTABANI KODLARI
+import android.content.ContentValues
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+import android.telephony.TelephonyCallback
+import android.widget.Toast
+import java.lang.Exception
+
+private val DATABASE_NAME = "musteriler.db"
+private val DATABASE_VERSION = 1
+private val TABLO_KISILER = "kisiler"
+private val ROW_ID = "id"
+private val ROW_AD = "ad"
+private val ROW_SOYAD = "soyad"
+private val ROW_TEL = "tel"
+private val ROW_MAIL = "mail"
+
+class VeriTabani(context: Context) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    override fun onCreate(db: SQLiteDatabase?) {
+        db?.execSQL("CREATE TABLE " + TABLO_KISILER + "("
+                + ROW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ROW_AD + " TEXT NOT NULL, "
+                + ROW_SOYAD + " TEXT NOT NULL, "
+                + ROW_TEL + " TEXT NOT NULL, "
+                + ROW_MAIL + " TEXT NOT NULL)")
+    }
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        db?.execSQL("DROP TABLE IF EXISTS $TABLO_KISILER")
+        onCreate(db)
+    }
+    fun veriEkle(ad: String, soyad: String, tel: String, mail: String) {
+        val db = this.writableDatabase
+        try {
+            val cv = ContentValues()
+            cv.put(ROW_AD, ad)
+            cv.put(ROW_SOYAD, soyad)
+            cv.put(ROW_TEL, tel)
+            cv.put(ROW_MAIL, mail)
+            db.insert(TABLO_KISILER, null, cv)
+        } catch (e: Exception) {
+        } finally {
+            db.close()
+        }
+    }
+    fun veriListele(): List<String> {
+        val veriler = ArrayList<String>()
+        val db = this.readableDatabase
+        try {
+            val sutunlar = arrayOf(ROW_ID, ROW_AD, ROW_SOYAD, ROW_TEL, ROW_MAIL)
+            val cursor = db.query(TABLO_KISILER, sutunlar, null, null, null, null, null, null)
+            while (cursor.moveToNext()) {
+                veriler.add(cursor.getInt(0).toString() + "-" +
+                        cursor.getString(1).toString() + "-" +
+                        cursor.getString(2).toString() + "-" +
+                        cursor.getString(3).toString() + "-" +
+                        cursor.getString(4).toString())
+            }
+        } catch (e: Exception) {
+
+        }
+        db.close()
+        return veriler
+    }
+}
