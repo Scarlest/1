@@ -1,0 +1,287 @@
+//activityMain
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/etAd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="İsminizi Giriniz...."
+                android:inputType="textPersonName" />
+
+            <Spinner
+                android:id="@+id/spnEgitim"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/spnEgitim"
+                android:minHeight="48dp" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <RadioButton
+                    android:id="@+id/rbErkek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Erkek" />
+
+                <RadioButton
+                    android:id="@+id/rbKadın"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kadın" />
+
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/etYas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Yaşınızı Giriniz..."
+                android:inputType="number"
+                android:minHeight="48dp"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <TextView
+                android:id="@+id/etMaas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnKayıt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Kayıt" />
+
+                <Button
+                    android:id="@+id/btnDuzeltme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Düzeltme" />
+
+                <Button
+                    android:id="@+id/btnSilme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Silme" />
+
+                <Button
+                    android:id="@+id/btnListele"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Listeleme" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnOrtalama"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ortalama" />
+
+            <TextView
+                android:id="@+id/tvYas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tvMaas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ListView
+                android:id="@+id/lvMusteriler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+//mainactivity
+
+package com.example.myapplication
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.Spinner
+import android.widget.*
+
+class MainActivity : AppCompatActivity() {
+    lateinit var etAd: EditText;
+    lateinit var etYas: EditText;
+    lateinit var etMaas: EditText;
+    lateinit var rbErkek: RadioButton;
+    lateinit var rbKadın: RadioButton;
+    lateinit var spnEgitim: Spinner;
+    lateinit var btnKayıt: Button;
+    lateinit var btnDuzeltme: Button;
+    lateinit var btnSilme: Button;
+    lateinit var btnListele: Button;
+    lateinit var btnOrtalama:Button;
+    lateinit var lvMusteriler:ListView;
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+
+
+
+
+        etAd = findViewById(R.id.etAd);
+        etYas = findViewById(R.id.etYas);
+        etMaas = findViewById(R.id.etMaas);
+        rbErkek = findViewById(R.id.rbErkek);
+        rbKadın = findViewById(R.id.rbKadın);
+        spnEgitim = findViewById(R.id.spnEgitim);
+        btnKayıt = findViewById(R.id.btnKayıt);
+        btnDuzeltme = findViewById(R.id.btnDuzeltme);
+        btnSilme = findViewById(R.id.btnSilme);
+        btnListele = findViewById(R.id.btnListele);
+        btnOrtalama = findViewById(R.id.btnOrtalama);
+        lvMusteriler = findViewById(R.id.lvMusteriler);
+        listele()
+
+        btnKayıt.setOnClickListener {
+
+
+
+            val gelenAd = etAd.text.toString()
+            val gelenYas = etYas.text.toString()
+            val gelenMaas = etMaas.text.toString()
+            val gelenCinsiyet = "Cinsiyet"
+            val gelenEgitim = spnEgitim.selectedItem.toString()
+            val vt = VeriTabanim(this)
+            val sonuc = vt.veriEkle(gelenAd, gelenYas, gelenMaas, gelenCinsiyet, gelenEgitim)
+            Toast.makeText(this, sonuc.toString() + "Kayıt Eklendi", Toast.LENGTH_LONG).show()
+            listele()
+            temizle()
+
+    }
+
+        btnListele.setOnClickListener { listele() }
+
+    }
+
+    private fun temizle() {
+        etAd.text = null
+        etMaas.text = null
+        etYas.text = null
+
+    }
+
+    private fun listele() {
+        val vt = VeriTabanim(this)
+        val liste= vt.veriListele()
+        val adapter= ArrayAdapter(this, android.R.layout.simple_list_item_1, liste)
+        lvMusteriler.adapter=adapter
+    }
+}
+
+//Veritabanı
+
+package com.example.myapplication
+
+import android.content.ContentValues
+import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+
+private val DATABASE_NAME = "musteriler.db"
+private val DATABASE_VERSION = 1
+private val TABLO_KISILER = "kisiler"
+private val ROW_ID = "id"
+private val ROW_AD = "ad"
+private val ROW_YAS = "yas"
+private val ROW_MAAS = "maas"
+private val ROW_CINSIYET = "cinsiyet"
+private val ROW_EGITIM = "egitim"
+
+class VeriTabanim (context: Context) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    override fun onCreate(db: SQLiteDatabase?) {
+        db?.execSQL("CREATE TABLE " + TABLO_KISILER + "("
+                + ROW_ID + "INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ROW_AD + " TEXT NOT NULL, "
+                + ROW_YAS + " TEXT NOT NULL, "
+                + ROW_MAAS + " TEXT NOT NULL, "
+                + ROW_CINSIYET + " TEXT NOT NULL, "
+                + ROW_EGITIM + " TEXT NOT NULL)");
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        db?.execSQL("DROP TABLE IF EXISTS $TABLO_KISILER")
+        onCreate(db)
+    }
+
+
+
+    fun veriEkle(gelenAd: String, gelenYas: String, gelenMaas: String, gelenCinsiyet: String, gelenEgitim: String) {
+        val db = this. writableDatabase
+        try {
+            val cv = ContentValues()
+            cv.put(ROW_AD, gelenAd)
+            cv.put(ROW_YAS, gelenYas)
+            cv.put(ROW_MAAS, gelenMaas)
+            cv.put(ROW_CINSIYET, gelenCinsiyet)
+            cv.put(ROW_EGITIM, gelenEgitim)
+            db.insert(TABLO_KISILER, null, cv)
+        }catch (e: Exception) {
+
+        }finally {
+            db.close()
+        }
+    }
+
+    fun veriListele(): List<String> {
+        val veriler = ArrayList<String>()
+        val db = this.readableDatabase
+        try {
+            val sutunlar = arrayOf(ROW_ID, ROW_AD, ROW_YAS, ROW_MAAS, ROW_CINSIYET, ROW_EGITIM)
+            val cursor = db.query(TABLO_KISILER, sutunlar, null, null, null, null, null, null)
+            while (cursor.moveToNext()) {
+                veriler.add(cursor.getInt(0).toString() + "-" +
+                        cursor.getInt(1).toString() + "-" +
+                        cursor.getInt(2).toString() + "-" +
+                        cursor.getInt(3).toString() + "-" +
+                        cursor.getInt(4).toString())
+            }
+        }catch (e: Exception) {
+
+        }
+        db.close()
+        return veriler
+    }
+
+}
